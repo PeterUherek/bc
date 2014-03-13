@@ -4,6 +4,7 @@ import main
 import goodlog_manager as g_manager
 import faillog_manager
 
+
 wm = pyinotify.WatchManager() # Watch Manager
 mask = pyinotify.IN_MODIFY # watched events
 
@@ -19,8 +20,7 @@ class EventHandler(pyinotify.ProcessEvent):
         print u_manager.Print_dic_of_user()
 
 
-#u_manager.Get_dic_of_user()
-hour_list = [0, 10, 20, 3, 4, 50, 6]
+u_manager.Get_dic_of_user()
 #hour_list = g_manager.Get_hour_list("03")
 
 #log = main.Log_faillog()

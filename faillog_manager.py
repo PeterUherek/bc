@@ -5,22 +5,23 @@ import Models as m
 
 def Control_and_push_faillog(line):
 	session = d_manager.Get_session()
-	user_id = u_manager.Get_user_id(line[8])
+	user = u_manager.Get_user(line[8])
 	timestamp = Get_Timestamp(line)
 	count=0
-	if user_id == 0:
+	if user.id == 0:
 		count=2
-	log = session.query(m.Fail_log).filter_by(user_id=user_id,time=timestamp).first()
+	log = session.query(m.Fail_log).filter_by(user_id=user.id,time=timestamp).first()
 	print log
 	if log is None:
-		return Add_faillog(line,timestamp,user_id,count)
+		return Add_faillog(line,timestamp,user,count)
 	else:
 		return None
 	
-def Add_faillog(line,timestamp,user_id,count):
+def Add_faillog(line,timestamp,user,count):
 	print "Pridal som objekt"
-	new_log = m.Fail_log(user_id=user_id,time=timestamp,ip_address=line[10+count])
+	new_log = m.Fail_log(user_id=user.id,time=timestamp,ip_address=line[10+count])
 	d_manager.Add_object(new_log)
+	u_manager.Add_one_to_fail_counter(user.name)
 	return new_log
 
 def Get_Timestamp(line):

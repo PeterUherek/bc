@@ -9,6 +9,7 @@ class User(d_manager.Base):
 	__tablename__ = 'user'
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
+	fail_counter = Column(Integer)
 	good_log = relationship("Good_log",order_by="Good_log.id",backref="user")
 	fail_log = relationship("Fail_log",order_by="Fail_log.id",backref="user")
 	def __repr__(self):

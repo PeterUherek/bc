@@ -17,6 +17,7 @@ def Add_login(line):
 	timestamp = Get_timestamp(line,0)
 	new_log = m.Good_log(user_id=user.id,console=line[1],ip_address=line[2],log_time= timestamp)
 	d_manager.Add_object(new_log)
+	u_manager.Update_fail_counter(user.name,0)
 
 def Add_logoff(line):
 	session = d_manager.Get_session()
