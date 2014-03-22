@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy import ForeignKey
 import database_manager as d_manager
 from sqlalchemy.orm import relationship, backref
@@ -10,6 +10,9 @@ class User(d_manager.Base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
 	fail_counter = Column(Integer)
+	lock = Column(Boolean)
+	change_time = Column(String)
+	delete_time = Column(String)
 	good_log = relationship("Good_log",order_by="Good_log.id",backref="user")
 	fail_log = relationship("Fail_log",order_by="Fail_log.id",backref="user")
 	def __repr__(self):

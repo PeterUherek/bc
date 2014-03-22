@@ -5,11 +5,19 @@ import Models as m
 
 def Control_and_push_faillog(line):
 	session = d_manager.Get_session()
-	user = u_manager.Get_user(line[8])
+	if line[8] == "invalid":
+		count = 2
+		if u_manager.dic_of_user.__contains__(line[10]):
+			print "Cototo"
+			user = u_manager.Get_user(line[10])
+		else:
+			user = u_manager.Get_user("invalid")
+	else:
+		user = u_manager.Get_user(line[8])
+		count = 0
+	print "User", user.name
+	print line[10]
 	timestamp = Get_Timestamp(line)
-	count=0
-	if user.id == 0:
-		count=2
 	log = session.query(m.Fail_log).filter_by(user_id=user.id,time=timestamp).first()
 	print log
 	if log is None:
@@ -34,3 +42,8 @@ def Get_number_user_faillog_on_sepecific_ip(log):
 	num = session.query(m.Fail_log).filter_by(ip_address=log.ip_address, user_id=log.user_id).count()
 	return num
 
+def Get_number_of_faillog_from_last_password_change(timestamp,key):
+	session = d_manager.Get_session()
+	q = d_manager.Get_and(m.Fail_log.user_id,key,m.Fail_log.time,timestamp)
+	num = session.query(m.Fail_log).filter(q).count()
+	return num
