@@ -39,17 +39,17 @@ def Update_dic_of_user(key):
 def Get_dic_of_user():
 	session = d_manager.Get_session()
 	for user in session.query(m.User).all():
-		print "User traala :", user.name, ":", user.id
 		dic_of_user[user.name]=user.id
-	pass;
+	Print_dic_of_user()
+	
 
 
 def Print_dic_of_user():
-	print "Vypis vsetkych userov"
+	print "--------------Vypis vsetkych pouzivatelov------------------"
 	count = 0
 	for user in dic_of_user:
 		count+=1
-		print"User cislo:",count ," Meno:",user, " ID: ", dic_of_user[user]
+		print"No.",count ," Meno:",user, " ID:", dic_of_user[user]
 	pass
 
 def Update_user(key,column,value):

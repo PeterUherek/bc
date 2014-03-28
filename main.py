@@ -66,7 +66,6 @@ def Delete_User():
 
 def Log_faillog():
 	lines = Get_lines_from_auth_log("Failed")
-	print lines
 	for line in lines:
 		line = line.split()
 		#print "Toto je line", line

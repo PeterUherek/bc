@@ -5,8 +5,6 @@ import Models as m
 
 
 def Add_log(line):
-	print "ide to ? ", line
-	print line[8]
 	if line[8] != '-':
 		Add_login(line)
 	else:
@@ -84,7 +82,7 @@ def Get_day_list(month,key,flag,ip):
 def Get_number_of_goodlog_from_last_password_change(timestamp,key):
 	session = d_manager.Get_session()
 	q = d_manager.Get_and(m.Good_log.user_id,key,m.Good_log.log_time,timestamp)
-	num = session.query(m.Good_loetg).filter(q).count()
+	num = session.query(m.Good_log).filter(q).count()
 	return num
 
 def Get_last_active_log(key):

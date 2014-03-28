@@ -15,7 +15,7 @@ class Thread (threading.Thread):
 	def run(self):
 		print "Starting " + self.name
 		analyze(self.name, self.log)
-		print "Exiting " + self.name
+		print "\nExiting " + self.name
 
 def analyze(threadName,log):
 	vector = []
@@ -25,8 +25,31 @@ def analyze(threadName,log):
 		vector.append(ip_analyze(log))
 		vector.append(fail_count_analyze(log))
 		vector.append(password_analyze(user))
+		vector.append(Status_analyze(log,user))
 
-	print vector
+		Print_vector(vector)
+		Result(vector)
+
+	else:
+		print "Vsetky metriky sa nemohli vypocitat! Pretoze pouzivatel ma zablokovane heslo alebo je vymazany z databazy pouzivatelov."
+
+def Result(vector):
+	result = 0
+	for v in vector:
+		result += v
+	result = (result/(vector.__len__()-1))
+	print "\nVysledna metrika:", result
+
+def Print_vector(vector):
+	print "\n-----------------Faillog Analyza-------------------"
+	print "Metrika zavisla od hodiny prihlasenia a ip adresy:", vector[0]
+	print "Metrika zavisla od hodiny prihlasenia:", vector[1]
+	print "Metrika zavisla od dna prihlasenia a ip adresy:", vector[2]
+	print "Metrika zavisla od dna prihlasenia:", vector[3]
+ 	print "Metrika zavisla od ip adresy:", vector[4]
+ 	print "Metrika zavisla od poctu nespravnych prihlaseni:", vector[5]
+ 	print "Metirka zavisla od poslednej zmeny hesla:",vector[6]
+ 	print "Metrika zavisla od aktivity pouzivatela:",vector[7]
 
 def Exist_analyze(user):
 	if user.delete_time is None:
@@ -50,13 +73,52 @@ def Exist_analyze(user):
 	"""
 
 def time_analyze(log,vector):
-	def Get_score(hour_list,index):
-		value = hour_list[index]
-		hour_list.sort(reverse=True)
-		maximum = hour_list[0]
-		print maximum
-		print value
-		if maximum is 0:
+	
+	def Control_index_down(index,x):
+		if index != 0:
+			return (index-1)
+		else:
+			return x
+	def Control_index_up(index,x):
+		if index != x:
+			return (index+1)
+		else:
+			return 0
+			
+	def Get_local_max(index,profile_list,foo,prefix):
+		origin = profile_list[index]
+		index = foo(index,prefix)
+		current = profile_list[index]
+		while origin < current:
+			index = foo(index,prefix)
+			origin = current
+			current = profile_list[index]
+		return origin
+
+	def Get_prefix(profile_list):
+		if profile_list.__len__() == 24:
+ 			return 23
+		else:
+			return 6
+
+	def Get_max(maximum_1,maximum_2):
+		if maximum_2 > maximum_1:
+			return maximum_2
+		else: 
+			return maximum_1
+
+	def Get_score(profile_list,index):
+		value = profile_list[index]
+		#hour_list.sort(reverse=True)
+		prefix = Get_prefix(profile_list)
+		maximum_1 = Get_local_max(index,profile_list,Control_index_down,prefix)
+		print "Maximum_1 je:", maximum_1
+		maximum_2 = Get_local_max(index,profile_list,Control_index_up,prefix)
+		print "Maximum_2 je:", maximum_2
+		
+		maximum = Get_max(maximum_1,maximum_2)
+
+		if maximum == 0:
 			print "Metrika nema vypovednu hodnotu!"
 			return 0
 		f_score = (value / maximum)*100
@@ -100,17 +162,17 @@ def password_analyze(user):
 	num_f = f_manager.Get_number_of_faillog_from_last_password_change(user.change_time,user.id)
 	num_g = g_manager.Get_number_of_goodlog_from_last_password_change(user.change_time,user.id)
 	print "User si menil heslo ", user.change_time
-	print "Pocet good prihlaseni od poslednej zmeni hesla ", num_g
-	print "Pocet fail prihlaseni od poslednej zmeni hesla ", num_f
+	print "Pocet good prihlaseni od poslednej zmeny hesla ", num_g
+	print "Pocet fail prihlaseni od poslednej zmeny hesla ", num_f
 	num = (num_g /(num_f+num_g))*100 
 	print "Vysledne cislo je ",num
 	return Get_fail_score(num)
 
 def Status_analyze(log,user):
 	log_1 = g_manager.Get_last_active_log(user.id) 
-	log_2 = g_manager.Get_last_active_log_on_ip(user.ip,log.ip_address)
+	log_2 = g_manager.Get_last_active_log_on_ip(user.id,log.ip_address)
 	if log_1 is not None and log_2 is None:
-		return 100
+		return 50
 	else: 
 		return 0
 
