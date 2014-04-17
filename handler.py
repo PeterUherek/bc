@@ -21,8 +21,6 @@ class EventHandler(pyinotify.ProcessEvent):
 
 u_manager.Get_dic_of_user()
 
-
-
 #hour_list = g_manager.Get_hour_list("03")
 #num = faillog_manager.Get_number_of_faillog_from_last_password_change("2014-03-21",2)
 #log = main.Log_faillog()

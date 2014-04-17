@@ -1,0 +1,27 @@
+[0, 0, 0, 0, 1, 1, 0, 1]
+
+-----------------Faillog Analyza-------------------
+Metrika zavisla od hodiny prihlasenia a ip adresy: 0
+Metrika zavisla od hodiny prihlasenia: 0
+Metrika zavisla od dna prihlasenia a ip adresy: 0
+Metrika zavisla od dna prihlasenia: 0
+Metrika zavisla od ip adresy: 100
+Metrika zavisla od poctu nespravnych prihlaseni: 60
+Metirka zavisla od poslednej zmeny hesla: 0
+Metrika zavisla od aktivity pouzivatela: 0
+Vysledny [0, 0, 0, 0, 100, 60, 0, 0]
+
+Vysledna metrika: 80.0
+
+
+-------------------------Faillog Analyza------------------------------
+Metrika zavisla od hodiny prihlasenia a ip adresy: 0       Vaha metriky: 1
+Metrika zavisla od hodiny prihlasenia:             0       Vaha metriky: 1
+Metrika zavisla od dna prihlasenia a ip adresy:    0       Vaha metriky: 1
+Metrika zavisla od dna prihlasenia:                0       Vaha metriky: 1
+Metrika zavisla od ip adresy:                      95      Vaha metriky: 1
+Metrika zavisla od poctu nespravnych prihlaseni:   10      Vaha metriky: 1
+Metirka zavisla od poslednej zmeny hesla:          6       Vaha metriky: 1
+Metrika zavisla od aktivity pouzivatela:           0       Vaha metriky: 1
+
+Vysledna metrika: 15.8571428571

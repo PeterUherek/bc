@@ -50,10 +50,11 @@ def New_user():
 	lines = Get_lines_from_auth_log("new user")
 	for line in lines:
 		line = line.split()
+		timestamp = f_manager.Get_Timestamp(line)
 		line = line[7].split("=")
 		line = line[1].strip(",")
 		print line
-		u_manager.Control_user(line)
+		u_manager.Control_user(line,timestamp)
 
 def Delete_User():
 	lines = Get_lines_from_auth_log("delete user")

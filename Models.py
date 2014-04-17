@@ -13,6 +13,7 @@ class User(d_manager.Base):
 	lock = Column(Boolean)
 	change_time = Column(String)
 	delete_time = Column(String)
+	creation_time = Column(String)
 	good_log = relationship("Good_log",order_by="Good_log.id",backref="user")
 	fail_log = relationship("Fail_log",order_by="Fail_log.id",backref="user")
 	def __repr__(self):
