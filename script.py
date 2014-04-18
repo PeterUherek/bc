@@ -1,6 +1,7 @@
 import database_manager as d_manager
 import Models as m
 from random import randint
+import smtplib 
 
 
 
@@ -27,6 +28,7 @@ def Add(x,hour):
 		time_2 = "2014-03-%d %s:%d:00"%(day,hour,ran_2)
 		Add_login(time_1,time_2)
 		i+=1
+"""
 Add(64,"00")
 Add(58,"01")
 Add(45,"02")
@@ -51,3 +53,22 @@ Add(59,"20")
 Add(68,"21")
 Add(87,"22")
 Add(94,"23")
+"""
+
+fromaddr = 
+toaddrs  =  
+msg = 'There was a terrible error that occured and I wanted you to know!'  
+  
+  
+# Credentials (if needed)  
+username =  
+password = 
+host = 'smtp.azet.sk'
+
+# The actual mail send  
+server = smtplib.SMTP(host,'465')
+server.ehlo()
+server.starttls()
+server.login(username,password)  
+server.sendmail(fromaddr, toaddrs, msg)  
+server.quit() 

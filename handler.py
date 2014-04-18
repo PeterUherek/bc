@@ -3,6 +3,7 @@ import users_manager as u_manager
 import main
 import goodlog_manager as g_manager
 import faillog_manager
+import analyze as an
 import Models
 
 wm = pyinotify.WatchManager() # Watch Manager
@@ -18,9 +19,10 @@ class EventHandler(pyinotify.ProcessEvent):
 
         print "Modify:", event.pathname
 
-
+weig = []
 u_manager.Get_dic_of_user()
-
+user = u_manager.Get_user_2(31)
+an.Exist_analyze(user,weig)
 #hour_list = g_manager.Get_hour_list("03")
 #num = faillog_manager.Get_number_of_faillog_from_last_password_change("2014-03-21",2)
 #log = main.Log_faillog()

@@ -22,21 +22,19 @@ def analyze(threadName,log):
 	vector = []
 	weight = []
 	user = u_manager.Get_user_2(log.user_id)
-	if Exist_analyze(user) == True and user.lock == False:
-		time_analyze(log,vector,user,weight)
-		vector.append(ip_analyze(log,weight))
+	vector.append(Exist_analyze(user,weight))
+	time_analyze(log,vector,user,weight)
+	vector.append(ip_analyze(log,weight))
 
-		vector.append(fail_count_analyze(log,weight))
-		vector.append(password_analyze(user,weight))
-		vector.append(Status_analyze(log,user,weight))
-		vector.append(Interval_analyze(user,weight))
+	vector.append(fail_count_analyze(log,weight))
+	vector.append(Interval_analyze(user,weight))
+	vector.append(password_analyze(user,weight))
+	vector.append(Status_analyze(log,user,weight))
 
-		Print_vector(vector,weight)
-		Result(vector,weight)
-
-	else:
-		print "Vsetky metriky sa nemohli vypocitat! Pretoze pouzivatel ma zablokovane heslo alebo je vymazany z databazy pouzivatelov."
-
+	Print_vector(vector,weight)
+	Result(vector,weight)
+	
+		
 def Result(vector,weight):
 	result = 0
 	w = 0
@@ -50,7 +48,7 @@ def Result(vector,weight):
 
 def Print_vector(vector,weight):
 	def Algin_printer(text,v,w):
-		for i in range(text.__len__()-1,50):
+		for i in range(text.__len__()-1,53):
 			text += " "
 		text += " %d"%(v)
 		for i in range(text.__len__()-1,58):
@@ -58,26 +56,38 @@ def Print_vector(vector,weight):
 		text += "Vaha metriky: %1.2f"%(w)
 		print text
 
-	print "\n-------------------------Faillog Analyza------------------------------"
-	Algin_printer("Metrika zavisla od hodiny prihlasenia a ip adresy:",vector[0],weight[0])
-	Algin_printer("Metrika zavisla od hodiny prihlasenia:",vector[1],weight[1])
-	Algin_printer("Metrika zavisla od dna prihlasenia a ip adresy:",vector[2],weight[2])
-	Algin_printer("Metrika zavisla od dna prihlasenia:",vector[3],weight[3])
- 	Algin_printer("Metrika zavisla od ip adresy:",vector[4],weight[4])
- 	Algin_printer("Metrika zavisla od poctu nespravnych prihlaseni:",vector[5],weight[5])
- 	Algin_printer("Metirka zavisla od poslednej zmeny hesla:",vector[6],weight[6])
- 	Algin_printer("Metrika zavisla od aktivity pouzivatela:",vector[7],weight[7])
- 	Algin_printer("Metrika zavisla od intezity neuspesnych prihlaseni:",vector[8],weight[8])
+	print "\n-------------------------Faillog Analyza--------------------------------------"
+	Algin_printer("Metrika zavisla od moznosti pristupu pouzivatela k OS:",vector[0],weight[0])
+	Algin_printer("Metrika zavisla od hodiny prihlasenia a ip adresy:",vector[1],weight[1])
+	Algin_printer("Metrika zavisla od hodiny prihlasenia:",vector[2],weight[2])
+	Algin_printer("Metrika zavisla od dna prihlasenia a ip adresy:",vector[3],weight[3])
+	Algin_printer("Metrika zavisla od dna prihlasenia:",vector[4],weight[4])
+ 	Algin_printer("Metrika zavisla od ip adresy:",vector[5],weight[5])
+ 	Algin_printer("Metrika zavisla od poctu nespravnych prihlaseni:",vector[6],weight[6])
+ 	Algin_printer("Metrika zavisla od intezity neuspesnych prihlaseni:",vector[7],weight[7])
+ 	Algin_printer("Metirka zavisla od poslednej zmeny hesla:",vector[8],weight[8])
+ 	Algin_printer("Metrika zavisla od aktivity pouzivatela:",vector[9],weight[9])
+ 	
 
 
 
-def Exist_analyze(user):
-	if user.delete_time is None:
-		return True
-	else: 
-		print "Uzivatel nefiguruje v zozname!"
-		return False
-
+def Exist_analyze(user,weight):
+	if user.delete_time == None and user.lock == False:
+		weight.append(0)
+		return 0
+	if user.delete_time == None and user.lock == True:
+		weight.append(1)
+		return 0
+	if user.delete_time != None:
+		weight.append(1)
+		ttm_1 = user.delete_time
+		ttm_2 = datetime.datetime.now()
+		ttm = ttm_2 - ttm_1
+		x = ttm.days / 30
+		x = int(x)
+		if x > 10:
+			x = 10
+		return x*10
 	"""
 	Spravim priemer 
 	"""
