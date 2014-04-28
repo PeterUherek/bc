@@ -21,14 +21,14 @@ CONNECTION_STRING: postgresql://postgres:asdf456@localhost:5432/Log
 #                    Vypisy mozu byt pouzite aj na debugovacie uceli.
 #  
 PRINT_ON_TERMINAL: True
+# 
+# INFO_LOG_FILE_PATH: Adresa suboru sluziaceho na zaznamenavanie chyb a dolezitych 
+#					  akcii systemu - blokovanie pouzivatela, blokovanie ip adresy, 
+#					  vysoka miera ohrozenia OS. Zaznamenanie akcii sluzi na spatnu  
+#					  kontorlu cinnosti systemu.
 #
-# INFO_LOG_FILE_PATH: Adresa suboru sluziaceho na zaznamenavanie dolezitych akcii 
-#					  systemu - blokovanie pouzivatela, blokovanie ip adresy, vysoka 
-#					  miera ohrozenia OS. Zaznamenanie akcii sluzi na spatnu kontrolu 
-#					  cinnosti systemu.
-#
-#					  Prednastavena hodnota je:
-#					  /var/log/idsystem.log
+#					  Prednastavena hodnota je: 
+#					  /var/log/ipsystem.log
 #					 
 #					  Zapisy zaznamov sa vzdy pridavaju na koniec suboru. V pripade
 #					  neexistencie suboru sa vzdy vytvori novy subor. 
@@ -66,10 +66,10 @@ LOG_BLOCK_IP: True
 #
 LOG_BLOC_USER: True
 #
-# LOG_THREAT: Zaznamenavanie ohrozenia OS, do suboru zadaneho v argumente
+# LOG_THREAT: Zaznamenavanie neuspesneho prihlasenia do suboru zadaneho v argumente
 #			  INFO_LOG_FILE_PATH. LOG_THREAT moze nadobudat len dve hodnoty a
-#			  to True alebo False. Pokial je False, tak sa ohorzenie OS
-#			  nezaznamenava. V Opacnom pripade sa zaznamenava. Ohrozenie OS, suvisi 
+#			  to True alebo False. Pokial je False, tak sa neuspesne prihlasenie
+#			  nezaznamenava. V Opacnom pripade sa zaznamenava. Miera ohrozenie suvisi 
 #			  s vysledkom analyzi neuspesneho prihlasenia pouzivatela do systemu. 
 #
 #			  Sprava tohto zaznamu je v tvare:
@@ -77,13 +77,13 @@ LOG_BLOC_USER: True
 #
 LOG_THREAT: True
 #
-# LOG_THREAT_FROM: Zaznamenavanie ohrozenie OS, od istej hodnoty ohorzenia OS.
+# LOG_THREAT_FROM: Zaznamenavanie neuspesneho prihlasenia od istej hodnoty ohorzenia.
 #				   Argument LOG_THREAT_FROM moze mat nastavene hodnoty od 0 po 100.
 #				   Hodnota 0 sposobi, ze sa budu zaznamenavat vsetky neuspesne pokusi
 #				   o prihlasenie.
 #
-#				   Argument LOG_THREAT_FROM je priamo podriadeny argumentu LOG_THREAT, to
-#				   znamena, ze je uciny az v pripade, ak je LOG_THREAT: True.
+#				   Argument LOG_THREAT_FROM je priamo podriadeny argumentu LOG_THREAT
+#                  to znamena, ze je uciny az v pripade, ak je LOG_THREAT: True.
 #
 #				   Prednastavena je hodnota 40.00 
 #				   
@@ -91,23 +91,187 @@ LOG_THREAT_FROM: 40.00
 #
 ######################################################################
 #
-[Metriky]
-Moznost_pristupu_pouzivatela_k_OS: 1
-Hodina_prihlasenia_a_ip_adresa: 1
-Hodina_prihlasenia: 1
-Den_prihlasenia_a_ip_adresy: 1
-Den_prihlasenia: 1
-IP_adresa: 1
-Pocet_neuspesnych_prihlaseni: 1
-Intezita_neuspesnych_prihlaseni: 1
-Posledna_zmena_hesla: 1
-Aktivita_pouzivatela: 1
+[Blokovanie]
+# BLOCK_IP: Blokovanie ip adresy systemom. Argument moze nadobudat len
+#			dve hodnoty a to True alebo False. Blokovanie ip adresy je 
+#			povolene ak hodnota argumentu je True. Pokial je False,tak
+#			blokovanie ip adresy je zakazane.  
+#
+BLOCK_IP: True
+#
+# BLOCK_IP_FROM: Blokovanie ip adresy na zaklade vysledku analyzi neuspesneho 
+#                prihlasenia. Argument BLOCK_IP_FROM moze mat nastavene hodnoty 
+#                od 0 po 100.
+#
+#				 Argument BLOCK_IP_FROM je priamo podriadeny argumentu BLOCK_IP
+#                to znamena, ze je uciny az v pripade, ak je BLOCK_IP: True.
+#
+#				 Prednastavena hodnota je: 40.00
+#
+BLOCK_IP_FROM: 40.00
+#
+# FILE_BLOCK_IP: Adresa suboru obsahujuceho zablokovane ip adresy. Pridanim
+#				 ip adresy do tohto suboru sa ip adresa automaticky zablokuje.
+#				 Pokial argument nenabuda ziadnu hodnotu, tak ip adresa sa tymto 
+#				 sposobom neblokuje. Kontrola obsahu suboru moze sluzit aj na 
+#				 spatnu kontrolu cinnosti systemu. Blokovane ip adresy sa vzdy
+#				 pridavaju na koniec suboru. 
+#
+#				 Prednastavena je hodnota:
+#				 /etc/host.deny
+#
+FILE_BLOCK_IP: /etc/host.deny
+#
+# FILE_BLOCK_IP_FORMAT: Format zaznamu zapisaneho do suboru z argumentu FILE_BLOCK_IP.
+#						Formatovanim zaznamu sa da obmedzit blokovanie ip adresy. Hodnoty
+#						tohto argumentu su zavisle od suboru z argumentu FILE_BLOCK_IP.
+#						V pripade, ze argument ma hodnotu 'sshd', tak sa bude blokovat 
+#						len pristup pomocou ssh. V pripade, ze ma argument hodntou 'ALL',
+#						tak sa bude blokovat akykolvek pristup do OS. 
+#
+#                       Prednastavena je hodnota: sshd
+#
+FILE_BLOCK_IP_FORMAT: sshd
+#
+# BLOCK_IP_COMMAND: Blokovanie ip adresy pomocou prikazu. Hodnota argumentu
+#				    zavisi od operacneho systemu. V pripade, ze argument nema 
+#				    ziadnu hodnotu, tak ip adresa tymto sposobom neblokuje.
+#
+#				    Prednstavena je hodnota:
+#				    iptables -A INPUT -s %s -j DROP
+#
+BLOCK_IP_COMMAND: iptables -A INPUT -s %s -j DROP
+#
+# ALLOW_IP_ADDRESS: Zoznam ip adries, ktore sa nebudu nikdy blokovat. Divoko 
+#					pouzivane blokovanie ip adries moze prispiet k nedostupnosti 
+#					OS. Tento zoznam sluzi na zachovanie konektivity s dolezitymi
+#					ip adresami.  
+#
+#					Priklad:
+#					ALLOW_IP_ADDRESS: 192.168.1.15, 192.168.45.23
+#
+ALLOW_IP_ADDRESS: 
+#
+# BLOCK_USER: Blokovanie pouzivatela OS. Argument moze nadobudat len dve
+#			  hodnoty a to True alebo False. Blokovanie pouzivatela je 
+#			  povolene ak hodnota argumentu je True. Pokial je False, tak
+#			  blokovanie pouzivatela je zakazane.
+#  			
+#	 		  Prednastavena hodnota je: False
+#
+BLOCK_USER: False
+#
+# BLOCK_USER_FROM: Blokovanie pouzivatela na zaklade vysledku analyzi neuspesneho 
+#                  prihlasenia. Argument BLOCK_USER_FROM moze mat nastavene hodnoty 
+#                  od 0 po 100.
+#
+#				   Argument BLOCK_USER_FROM je priamo podriadeny argumentu BLOCK_USER
+#                  to znamena, ze je uciny az v pripade, ak je BLOCK_USER: True.
+#
+#				   Prednastavena hodnota je: 40.00
+#
+BLOCK_USER_FROM: 40.00
+#
+# BLOCK_USER_COMMAND: Blokovanie pouzivatela pomocou prikazu. Hodnota argumentu
+#				      zavisi od operacneho systemu. Argument musi mat spravnu
+#					  hodnotu, aby sa blokovanie pouzivatela vykonalo.
+#
+#					  Prednastavena hodnota je:
+#					  passwd -l %s
+#
+BLOCK_USER_COMMAND: passwd -l %s
+#
+# ALLOW_USER: Zoznam pouzivatelov, ktori sa nebudu nikdy blokovat. Divoko 
+#			  pouzivane blokovanie pouzivatelov moze prispiet k DoS utokom.
+#			  Preto sa odporuca uviest pouzivatela typu root do zoznamu.    
+#
+#			  Priklad:
+#			  ALLOW_USER: root, peter
+#
+ALLOW_USER: root
 #
 #######################################################################
 #
-[Blokovanie]
-IP_adresy: True
-IP_adresy_od_ohorzenia: 40.00
-Uzivatelia: False
-Uzivatelia_od_ohrozenia: 40.00
-Zakazane_blokovanie_ip_adries: 192.168.1.45
+[Metriky]
+#
+# Vsetky vahy metrik mozu nadobudat hodnoty od 0.00 po 1.00. V pripade, ze vahy metrik
+# maju hodnotu 0, tak ich vysledok nema dosah na vypocet celkoveho ohrozenia OS.
+#
+# ABLILITY_ACCESS: Vaha metriky vyjadrujuca moznost pristupu pouzivatala k OS.
+#				   Metrika ma urcit o akeho sa jedna pouzivatela a podla toho
+#				   vyvodit vyslednu metriku.
+#
+#				   Prednastavena vaha metriky je: 1.00
+#
+ABILITY_ACCESS: 1.00
+#
+# HOUR_AND_IP_ADDRESS: Vaha metriky vyjadrujca zavislost neuspesneho prihlasenia od
+#					   hodiny a ip adresy. Metrika ma urcit ci pokus o prihlasenie
+#					   je v case, kedy sa pouzivatel bezne prihlasoval na danu ip 
+#					   adresu.
+#
+#					   Prednastavena vaha metriky je: 0.50
+#
+HOUR_AND_IP_ADDRESS: 0.50
+#
+# HOUR: Vaha metriky vyjadrujca zavislost neuspesneho prihlasenia
+#		od hodiny. Metrika ma urcit ci pokus o prihlasenie je v
+#		case, kedy sa pouzivatel bezne prihlasoval.
+#		
+#		Prednastavena vaha metriky je: 0.50
+#
+HOUR: 0.50
+#
+# DAY_AND_IP_ADDRESS: Vaha metriky vyjadrujca zavislost neuspesneho prihlasenia
+#					  od dna a ip adresy. Metrika ma urcit ci pokus o prihlasenie
+#					  je v case, kedy sa pouzivatel bezne prihlasoval na danu ip 
+#					  adresu. 
+# 
+#                     Prednastavena vaha metriky je: 0.50
+#
+DAY_AND_IP_ADDRESS: 0.50
+#
+# DAY: Vaha metriky vyjadrujca zavislost neuspesneho prihlasenia
+#	   od dna. Metrika ma urcit ci pokus o prihlasenie je v
+#	   case, kedy sa pouzivatel bezne prihlasoval.
+#
+# 	   Prednastavena vaha metriky je: 0.50
+#
+DAY: 0.50
+#
+# IP_ADDRESS: Vaha metriky vyjadrujuca zavislost neuspesneho prihlasenia
+#			  od ip adresy. Metrika ma urcit ako doveryhodna je ip adresa.
+#			 
+#			  Prednastavena vaha metriky je: 1 
+IP_ADDRESS: 1
+#
+# FAIL_COUNTER: Vaha metriky vyjadrujuca pocet neuspesnych prihlaseni za sebou.
+#                
+#               Prednastavena vaha metriky je: 1
+#               
+FAIL_COUNTER: 1
+#
+# FAIL_ACCESS_INTENSITY: Vaha metriky vyjadrujuca intezitu neuspesnych prihlaseni.
+#			 			 Metrika ma urcit ci neuspesne prihlasovania sa vykonavaju
+#			 		     pravidelne.
+#
+#						 Prednastavena vaha metrike je: 1
+#
+FAIL_ACCESS_INTENSITY: 1
+#
+# MEMORIZE_PASSWORD: Vaha metriky vyjadrujuca znalost hesla pouzivatelom. Metrika ma
+#				     urcit ako dobre pouzivatel pozna svoje heslo.
+#
+#				     Prednastavena vaha metriku je: 1
+#    
+MEMORIZE_PASSWORD: 1
+#
+# ACTIVITY_OF_USER: Vaha metriky vyjadrujuca aktivitu pouzivatela (prihlaseni, ohdlaseni).
+#	
+#                   Prednastavena vaha metriku je: 1
+#    
+ACTIVITY_OF_USER: 1
+#
+#######################################################################
+
+

@@ -112,7 +112,7 @@ def Blocking_user(log,user):
 def Blocking_ip_address(log):
 	command = "iptables -A INPUT -s %s -j DROP"%(log.ip_address)
 	try:
-		open(command)
+		popen(command)
 		f = open('/etc/hosts.deny','a')
 		f.write('sshd: {0}\n'.format(log.ip_address))
 		f.close()
@@ -123,3 +123,5 @@ def Blocking_ip_address(log):
 
 
 
+command = logger.Block_ip_command()
+popen(command)

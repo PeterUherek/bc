@@ -34,11 +34,11 @@ def Metrics():
 
 def Block_ip_address():
 	Config = Get_Parser()
-	block_ip = Config.getboolean("Blokovanie", "ip_adresy")
+	block_ip = Config.getboolean("Blokovanie", "block_ip")
 	return block_ip
 
 def Block_ip_address_value():
-	value = ConfigSectionMap("Blokovanie")['ip_adresy_od_ohorzenia']
+	value = ConfigSectionMap("Blokovanie")['block_ip_from']
 	return float(value) 
 
 def Log_ip_address():
@@ -55,11 +55,11 @@ def Log_user():
 
 def Block_user():
 	Config = Get_Parser()
-	block_user = Config.getboolean("Blokovanie", "uzivatelia")
+	block_user = Config.getboolean("Blokovanie", "block_user")
 	return block_user
 
 def Block_user_value():
-	value = ConfigSectionMap("Blokovanie")['uzivatelia_od_ohrozenia']
+	value = ConfigSectionMap("Blokovanie")['block_user_from']
 	return float(value) 
 
 def Record_hazard():
@@ -79,6 +79,12 @@ def Log_format():
 	value = Config.get("Logovanie","log_format")
 	return value
 
+def Block_ip_command():
+	Config = Get_Parser()
+	value = Config.get("Blokovanie","block_ip_command")
+	print value
+	return value
+
 def Unblock_ip_addres():
 	Config = Get_Parser()
 	value = Config.get("Blokovanie","zakazane_blokovanie_ip_adries")
@@ -88,3 +94,4 @@ def Unblock_ip_addres():
 	for i in value:
 		dic[i] = None
 	return dic
+
