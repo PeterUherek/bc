@@ -3,11 +3,19 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import extract, and_, func, desc
+import config
+import log
 
 
-engine = create_engine('postgresql://postgres:asdf456@localhost:5432/Log', echo=False)
-Base = declarative_base()
-Base.metadata.create_all(engine)
+connection_string = config.Database_Connection()
+try:
+	engine = create_engine(connection_string, echo=False)
+	Base = declarative_base()
+	Base.metadata.create_all(engine)
+	log.Print("Vytvorenie spojenia do databazy sa podarilo!")	
+except: 
+	log.Print("Vytvorenie spojenia zlyhalo!")
+
 
 def Get_session():
 	Session = sessionmaker(bind=engine,expire_on_commit=False)

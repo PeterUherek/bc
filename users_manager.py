@@ -1,14 +1,13 @@
 import database_manager as d_manager
 import Models as m
+import log
 
 dic_of_user = {}
 
 def Control_user(user,timestamp):
-	if dic_of_user.__contains__(user):
-		print "obsahuje"
-	else:
-		print "neobsahuje"
+	if dic_of_user.__contains__(user)==False:
 		Add_user(user,timestamp)
+		log.Print("System zaznamenal pridanie noveho pouzivatela menom {0}",user)
 
 
 def Add_user(key,timestamp):
@@ -33,7 +32,6 @@ def Get_user(key):
 
 def Get_user_2(key):
 	session = d_manager.Get_session()
-	
 	user = session.query(m.User).filter_by(id=key).one()
 	session.close()
 	return user
@@ -77,9 +75,15 @@ def Add_one_to_fail_counter(key):
 
 def Lock_user(key,value):
 	Update_user(key,"lock",value)
+	if(value==True):
+		log.Print("System zaznamenal blokovanie pouzivatela menom {0}",key)
+	else:
+		log.Print("System zaznamenal odblokovznie pouzivatela menom {0}",key)
 
 def Password_changed_time(key,value):
 	Update_user(key,"change_time",value)
+	log.Print("System zaznamenal zmenu hesla pouzivatela menom {0}",key)
 
 def Remove_user(key,value):
 	Update_user(key,"delete_time",value)
+	log.Print("System zaznamenal vymazanie pouzivatela menom {0}",key)

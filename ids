@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+import handler
+import log
+import setproctitle
+import os
+
+setproctitle.setproctitle("IDSystem")
+
+log.Get_logger()
+log.Get_print_on_terminal()
+handler.Start_capture()

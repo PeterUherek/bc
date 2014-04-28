@@ -2,6 +2,7 @@ import database_manager as d_manager
 import users_manager as u_manager
 from time import gmtime, strftime
 import Models as m
+import log
 
 
 def Add_log(line):
@@ -16,6 +17,7 @@ def Add_login(line):
 	new_log = m.Good_log(user_id=user.id,console=line[1],ip_address=line[2],log_time= timestamp)
 	d_manager.Add_object(new_log)
 	u_manager.Update_fail_counter(user.name,0)
+	log.Print("System zaznamenal prihlasenie pouzivatela menom {0} na ip adrese {1}",user.name,new_log.ip_address)
 
 def Add_logoff(line):
 	session = d_manager.Get_session()
@@ -24,6 +26,7 @@ def Add_logoff(line):
 	session.query(m.Good_log).filter_by(log_time=timestamp).update({"logoff_time": timestamp_2, "interval": line[14]})
 	session.commit()
 	session.close()
+	log.Print("System zaznamenal odhlasenie pozuivatela")
 
 
 def Get_timestamp(line,count):	
@@ -35,6 +38,12 @@ def Get_timestamp(line,count):
 def Get_number_user_goodlog_on_specific_ip(log):
 	session = d_manager.Get_session()
 	num = session.query(m.Good_log).filter_by(user_id=log.user_id,ip_address=log.ip_address).count()
+	session.close()
+	return num
+
+def Get_number_goodlog_on_specific_ip(log):
+	session = d_manager.Get_session()
+	num = session.query(m.Good_log).filter_by(ip_address=log.ip_address).count()
 	session.close()
 	return num
 

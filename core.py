@@ -1,8 +1,10 @@
-import os
+from os import popen
 import users_manager as u_manager
 import goodlog_manager as g_manager
 import faillog_manager as f_manager
-import analyze
+from analyze import Thread
+import config
+import log as logger
 
 def Log_goodlog():
 	line = Execute_command("last -iwF")
@@ -19,10 +21,8 @@ def Control_auth_log():
 def Block():
 	lines = Get_lines_from_auth_log("changed by")
 	for line in lines:
-		print line
 		line = line.split()
 		name = line[7]
-		print "Idem niekoho blokovat ",name
 		line = Execute_command("passwd -S "+name)
 		name = name.strip("'")
 		if line[1] == 'L':
@@ -35,13 +35,11 @@ def Changed_password():
 	for line in lines:
 		line = line.split()
 		name = line[9]
-		print "Meno", name
 		line = Execute_command("passwd -S "+name)
-		print "Cas", line[2]
 		u_manager.Password_changed_time(name,line[2])
 		
 def Get_lines_from_auth_log(key):
-	process = os.popen("tail /var/log/auth.log | grep \""+key+"\"")
+	process = popen("tail /var/log/auth.log | grep \""+key+"\"")
 	lines = process.readlines()
 	process.close()
 	return lines
@@ -53,7 +51,6 @@ def New_user():
 		timestamp = f_manager.Get_Timestamp(line)
 		line = line[7].split("=")
 		line = line[1].strip(",")
-		print line
 		u_manager.Control_user(line,timestamp)
 
 def Delete_User():
@@ -61,7 +58,6 @@ def Delete_User():
 	for line in lines:
 		line = line.split()
 		user = line[7].strip("'")
-		print "User",user
 		timestamp = f_manager.Get_Timestamp(line)
 		u_manager.Remove_user(user,timestamp)
 
@@ -69,44 +65,61 @@ def Log_faillog():
 	lines = Get_lines_from_auth_log("Failed")
 	for line in lines:
 		line = line.split()
-		#print "Toto je line", line
 		log = f_manager.Control_and_push_faillog(line)
-		if log is not None:
+		if log != None:
 			Start_analyze(log)
 
-	"""
-	line =line.readlines()
-	line = line[2].split()
-	u_manager.Control_user(line[0])
-	new_log = f_manager.Add_faillog(line)
-	return new_log
-	"""
 
 def Execute_command(command):
-	l = os.popen(command)
+	l = popen(command)
 	line = l.readline()
 	line = line.split()
 	return line
 
 def Start_analyze(log):
 	try:
-		thread = analyze.Thread(1,"Thread-1",log)
+		thread = Thread(1,"Thread-1",log)
 		thread.start()
+		thread.join()
+		Analyze_result(thread)
 	except:
 		print "Error: Analyze hasn't started"
 
 
+def Analyze_result(thread):
+	user = u_manager.Get_user_2(thread.log.user_id)
+	if(config.Record_hazard_value()<=float(thread.hazard)):
+		logger.Log_hazard(thread.hazard,user.name,thread.log.ip_address)
+
+	if(config.Block_ip_address()==True):
+		if(config.Block_ip_address_value()<=float(thread.hazard)):
+			if(config.Unblock_ip_addres().__contains__(thread.log.ip_address)==False):
+				Blocking_ip_address(thread.log)
+
+	if(config.Block_user()==True and user.lock==False):
+		if(config.Block_user_value()<=float(thread.hazard)):
+			Blocking_user(thread.log,user)
+
+
+def Blocking_user(log,user):
+	command = "passwd -l %s"%user.name
+	try:
+		popen(command)
+		logger.Log_block_user(user.name)
+	except:
+		print "Error: Blokovanie pouzivatela zlyhalo"
+
+def Blocking_ip_address(log):
+	command = "iptables -A INPUT -s %s -j DROP"%(log.ip_address)
+	try:
+		open(command)
+		f = open('/etc/hosts.deny','a')
+		f.write('sshd: {0}\n'.format(log.ip_address))
+		f.close()
+		logger.Log_block_ip(log)
+	except:
+		print "Error: BLokovanie adresy zlyhalo"
 
 
 
-#new = ""
-#print("NOVE:"+ file_line)
-#print("Stare:"+exec_line)
-
-#count=0
-#while exec_line != file_line:
-#	new = new + exec_line
-#	exec_line = l.readline()
-#	print(exec_line)
-#	count= count +1
 

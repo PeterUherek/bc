@@ -1,0 +1,113 @@
+[Databaza]
+# CONNECTION_STRING: Retazec do databazy by mal byt v tvare:
+#                    dialect+driver://username:password@host:port/database
+#
+#                    Prikladom moze retazec do postgresql databazy:
+#                    postgresql://postgres:password@localhost:5432/Log
+# 
+#                    Viac prikladov je mozne najst na stranke ORM mapovaca SQLAlchemy:
+#					 http://docs.sqlalchemy.org/en/rel_0_9/core/engines.html
+# 
+CONNECTION_STRING: postgresql://postgres:asdf456@localhost:5432/Log
+#
+######################################################################
+#
+[Logovanie]
+# PRINT_ON_TERMINAL: Informacny vypis akcii systemu na terminal. Argument moze 
+#					 nadobudat len dve hodnoty a to True alebo False. Pokial 
+#					 nadobuda argument hodnotu True, tak system vypisuje 
+#					 hodnoty na terminal, z ktoreho bol spusteni.  
+#
+#                    Vypisy mozu byt pouzite aj na debugovacie uceli.
+#  
+PRINT_ON_TERMINAL: True
+#
+# INFO_LOG_FILE_PATH: Adresa suboru sluziaceho na zaznamenavanie dolezitych akcii 
+#					  systemu - blokovanie pouzivatela, blokovanie ip adresy, vysoka 
+#					  miera ohrozenia OS. Zaznamenanie akcii sluzi na spatnu kontrolu 
+#					  cinnosti systemu.
+#
+#					  Prednastavena hodnota je:
+#					  /var/log/idsystem.log
+#					 
+#					  Zapisy zaznamov sa vzdy pridavaju na koniec suboru. V pripade
+#					  neexistencie suboru sa vzdy vytvori novy subor. 
+#					 
+INFO_LOG_FILE_PATH: /home/peter/isd.log
+#
+# LOG_FORMAT: Format zaznamov zapisovanych do suboru INFO_LOG_FILE_PATH.
+#
+#			  Prednastaveny format zaznamov je:
+#			  %(asctime)s - %(name)s - %(levelname)s - %(message)s
+#
+#			  Zaznamy su pisane pomocu primarneho modulu pythonu Logging, s ktoreho
+#			  sa vyuziva loggin.Formatter konstruktor. Viac prikladov formatovania 
+#			  zaznamov je mozne nasjst na stranke: http://docs.python.org/lib/node357.html
+#               
+LOG_FORMAT: %(asctime)s - %(name)s - %(levelname)s - %(message)s
+#
+# LOG_BLOCK_IP: Zaznamenavanie blokovania ip adresy do suboru zadaneho v argumente
+#				INFO_LOG_FILE_PATH. LOG_BLOCK_IP moze nadobudat len dve hodnoty a
+#				to True alebo False. Pokial je False, tak sa blokovanie ip adresy
+#				nezaznamenava. V Opacnom pripade sa zaznamenava. 
+#
+#				Sprava tohto zaznamu je v tvare:
+#				Blokovanie ip adresy: %s
+#				
+LOG_BLOCK_IP: True
+#
+# LOG_BLOC_USER: Zaznamenavanie blokovania uzivatela do suboru zadaneho v argumente
+#				 INFO_LOG_FILE_PATH. LOG_BLOCK_USER moze nadobudat len dve hodnoty a
+#				 to True alebo False. Pokial je False, tak sa blokovanie uzviatela
+#				 nezaznamenava. V Opacnom pripade sa zaznamenava.
+#
+#				 Sprava tohto zaznamu je v tvare:
+#				 Blokovanie uzivatela: %s
+#
+LOG_BLOC_USER: True
+#
+# LOG_THREAT: Zaznamenavanie ohrozenia OS, do suboru zadaneho v argumente
+#			  INFO_LOG_FILE_PATH. LOG_THREAT moze nadobudat len dve hodnoty a
+#			  to True alebo False. Pokial je False, tak sa ohorzenie OS
+#			  nezaznamenava. V Opacnom pripade sa zaznamenava. Ohrozenie OS, suvisi 
+#			  s vysledkom analyzi neuspesneho prihlasenia pouzivatela do systemu. 
+#
+#			  Sprava tohto zaznamu je v tvare:
+#			  Miera ohrozenia: %d Uzivatel: %s IP_adresa: %s
+#
+LOG_THREAT: True
+#
+# LOG_THREAT_FROM: Zaznamenavanie ohrozenie OS, od istej hodnoty ohorzenia OS.
+#				   Argument LOG_THREAT_FROM moze mat nastavene hodnoty od 0 po 100.
+#				   Hodnota 0 sposobi, ze sa budu zaznamenavat vsetky neuspesne pokusi
+#				   o prihlasenie.
+#
+#				   Argument LOG_THREAT_FROM je priamo podriadeny argumentu LOG_THREAT, to
+#				   znamena, ze je uciny az v pripade, ak je LOG_THREAT: True.
+#
+#				   Prednastavena je hodnota 40.00 
+#				   
+LOG_THREAT_FROM: 40.00
+#
+######################################################################
+#
+[Metriky]
+Moznost_pristupu_pouzivatela_k_OS: 1
+Hodina_prihlasenia_a_ip_adresa: 1
+Hodina_prihlasenia: 1
+Den_prihlasenia_a_ip_adresy: 1
+Den_prihlasenia: 1
+IP_adresa: 1
+Pocet_neuspesnych_prihlaseni: 1
+Intezita_neuspesnych_prihlaseni: 1
+Posledna_zmena_hesla: 1
+Aktivita_pouzivatela: 1
+#
+#######################################################################
+#
+[Blokovanie]
+IP_adresy: True
+IP_adresy_od_ohorzenia: 40.00
+Uzivatelia: False
+Uzivatelia_od_ohrozenia: 40.00
+Zakazane_blokovanie_ip_adries: 192.168.1.45
